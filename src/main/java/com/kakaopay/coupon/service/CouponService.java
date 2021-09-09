@@ -27,7 +27,7 @@ public class CouponService {
 
     @Transactional(readOnly = true)
     public Coupon get(Long id) {
-        Coupon coupon = couponRepo.findOne(id);
+        Coupon coupon = couponRepo.getById(id);
         if (coupon == null) {
             throw new NotExistCouponException("Not exist coupon with id : " + id);
         }
@@ -69,7 +69,6 @@ public class CouponService {
         return coupon;
     }
 
-    @Transactional(readOnly = true)
     private String generateUniqueCode() {
         int tryCount = TRY_COUNT_IN_COLLISION;
         String code = null;
