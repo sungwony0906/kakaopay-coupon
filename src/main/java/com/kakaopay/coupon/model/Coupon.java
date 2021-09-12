@@ -1,6 +1,7 @@
 package com.kakaopay.coupon.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -26,6 +27,7 @@ public class Coupon {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
     private Date createdAt;
 
+    @Builder
     public Coupon(String email, String code) {
         this.email = email;
         this.code = code;
