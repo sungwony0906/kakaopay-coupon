@@ -1,7 +1,8 @@
 package com.kakaopay.coupon.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -13,7 +14,6 @@ import com.kakaopay.coupon.repository.CouponRepository;
 import com.kakaopay.coupon.service.CouponService;
 import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,21 +40,20 @@ class CouponControllerTest {
 
     @Test
     void getCoupon_성공() throws Exception {
-        when(couponService.get(Mockito.<Long>any())).thenReturn(Coupon.builder().build());
+        doReturn(Coupon.builder().build()).when(couponService).get(1L);
         mvc.perform(get("/api/v1/coupon/{id}", 1))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getCouponList_성공() throws Exception {
-        when(couponService.getList(Mockito.<Pageable>any())).thenReturn(new PageImpl<Coupon>(new ArrayList<Coupon>()));
+        doReturn(new PageImpl<Coupon>(new ArrayList<Coupon>())).when(couponService).getList(any(Pageable.class));
         mvc.perform(get("/api/v1/coupon"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void createCoupon_파라미터_없을경우_실패() throws Exception {
-        when(couponService.create(Mockito.<CouponCreateDTO>any())).thenReturn(Coupon.builder().build());
         mvc.perform(post("/api/v1/coupon"))
                 .andExpect(status().is4xxClientError());
     }
@@ -65,12 +64,13 @@ class CouponControllerTest {
         CouponCreateDTO couponCreateDTO = new CouponCreateDTO();
         couponCreateDTO.setEmail("sample@gmail.com");
         String code = "code";
-        when(couponService.create(Mockito.<CouponCreateDTO>any()))
-                .thenReturn(Coupon.builder()
-                                    .email(couponCreateDTO.getEmail())
-                                    .code(code)
-                                    .build());
 
+        doReturn(Coupon.builder()
+                         .email(couponCreateDTO.getEmail())
+                         .code(code)
+                         .build())
+                .when(couponService)
+                .create(any(CouponCreateDTO.class));
 
         //when
         MvcResult mvcResult = mvc.perform(post("/api/v1/coupon")
